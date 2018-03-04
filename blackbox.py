@@ -99,6 +99,10 @@ def search(f, box, n, m, batch, resfile,
     fmax = max(abs(points[:, -1]))
     points[:, -1] = points[:, -1]/fmax
 
+    # rescaling function values
+    fmax = max(abs(pts[:, -1]))
+    pts[:, -1] = pts[:, -1]/fmax
+
     # volume of d-dimensional ball (r = 1)
     if d % 2 == 0:
         v1 = np.pi**(d/2)/np.math.factorial(d/2)
