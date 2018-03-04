@@ -54,8 +54,8 @@ def search(f, box, n, m, batch, resfile,
         Number of subsequent function calls.
     batch : int
         Number of function calls evaluated simultaneously (in parallel).
-    resfile : str
-        Text file to save results.
+    resfile : str, optional
+        Text file to save results if provided.
     rho0 : float, optional
         Initial "balls density".
     p : float, optional
@@ -139,14 +139,17 @@ def search(f, box, n, m, batch, resfile,
         with executor() as e:
             points[n+batch*i:n+batch*(i+1), -1] = list(e.map(f, list(map(cubetobox, points[n+batch*i:n+batch*(i+1), 0:-1]))))/fmax
 
-    # saving results into text file
-    points[:, 0:-1] = list(map(cubetobox, points[:, 0:-1]))
-    points[:, -1] = points[:, -1]*fmax
-    points = points[points[:, -1].argsort()]
+    if resfile:
+        # saving results into text file
+        points[:, 0:-1] = list(map(cubetobox, points[:, 0:-1]))
+        points[:, -1] = points[:, -1]*fmax
+        points = points[points[:, -1].argsort()]
 
     labels = [' par_'+str(i+1)+(7-len(str(i+1)))*' '+',' for i in range(d)]+[' f_value    ']
     np.savetxt(resfile, points, delimiter=',', fmt=' %+1.4e', header=''.join(labels), comments='')
 
+        np.savetxt(resfile, points, delimiter=',', fmt=' %+1.4e', header=''.join(labels), comments='')
+    return points
 
 def latin(n, d):
     """
