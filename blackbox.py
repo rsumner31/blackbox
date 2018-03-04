@@ -72,6 +72,9 @@ def search(f, box, n, m, batch, resfile,
     # space size
     d = len(box)
 
+    if not executor:
+        executor = get_default_executor()
+
     # adjusting the number of function calls to the batch size
     if n % batch != 0:
         n = n - n % batch + batch
@@ -231,3 +234,23 @@ def rbf(points, T):
         return sum(lam[i]*phi(np.linalg.norm(np.dot(T, np.subtract(x, points[i, 0:-1])))) for i in range(n)) + np.dot(b, x) + a
 
     return fit
+
+
+def get_default_executor():
+    try:
+        Pool = mp.Pool
+        with Pool():
+            pass
+        return Pool
+    except AttributeError:
+        warnings.warn("running on python2, setup context-manager for Pool object")
+        from contextlib import contextmanager
+        from functools import wraps
+
+        @wraps(mp.Pool)
+        @contextmanager
+        def Pool(*args, **kwargs):
+            pool = mp.Pool(*args, **kwargs)
+            yield pool
+            pool.terminate()
+        return Pool
