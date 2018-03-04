@@ -3,6 +3,22 @@ import multiprocessing as mp
 import numpy as np
 import scipy.optimize as op
 
+try:
+    Pool = mp.Pool
+    with Pool():
+        pass
+except AttributeError:
+    warnings.warn("running on python2, setup context-manager for Pool object")
+    from contextlib import contextmanager
+    from functools import wraps
+
+    @wraps(mp.Pool)
+    @contextmanager
+    def Pool(*args, **kwargs):
+        pool = mp.Pool(*args, **kwargs)
+        yield pool
+        pool.terminate()
+
 
 def get_default_executor():
     """
