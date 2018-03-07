@@ -28,7 +28,7 @@ def fun(par):
 
 ## How do I run the procedure?
 
-No installation is needed. Just place `blackbox.py` into your working directory. Main file should look like that:
+No installation is needed. Just place **blackbox.py** into your working directory. Main file should look like that:
 ```python
 import blackbox as bb
 
